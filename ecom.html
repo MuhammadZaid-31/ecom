@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple E-Commerce Site</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+
+        header {
+            background: #333;
+            color: #fff;
+            padding-top: 30px;
+            min-height: 70px;
+            border-bottom: #ccc 1px solid;
+        }
+
+        header h1 {
+            text-align: center;
+            margin: 0;
+        }
+
+        .products, .cart {
+            margin: 20px 0;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .product, .cart-item {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin: 10px;
+            padding: 20px;
+            width: 200px;
+            text-align: center;
+        }
+
+        .product img, .cart-item img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+
+        .button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin: 5px;
+        }
+
+        .button:hover {
+            background-color: #45a049;
+        }
+
+        .cart {
+            border-top: 2px solid #333;
+            padding-top: 20px;
+        }
+
+        .total {
+            font-size: 20px;
+            margin-top: 10px;
+        }
+
+        #checkout {
+            background-color: #f44336;
+        }
+
+        #checkout:hover {
+            background-color: #e53935;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Simple E-Commerce Site</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="products">
+            <!-- Product list will be injected here -->
+        </div>
+        <div class="cart">
+            <h2>Shopping Cart</h2>
+            <div id="cart-items">
+                <!-- Cart items will be injected here -->
+            </div>
+            <div class="total">Total: RS.<span id="total">0</span></div>
+            <button id="checkout" class="button">Checkout</button>
+        </div>
+    </div>
+
+    <script>
+        // Product data
+        const products = [
+            { id: 1, name: 'Product 1', price: 1500, image: 'a.jpg' },
+            { id: 2, name: 'Product 2', price: 2000, image: 'b.jpeg' },
+            { id: 3, name: 'Product 3', price: 2500, image: 'c.webp' }
+        ];
+
+        // Cart data
+        const cart = [];
+
+        function displayProducts() {
+            const productContainer = document.querySelector('.products');
+            productContainer.innerHTML = products.map(product => `
+                <div class="product">
+                    <img src="${product.image}" alt="${product.name}">
+                    <h3>${product.name}</h3>
+                    <p>RS.${product.price}</p>
+                    <button class="button" onclick="addToCart(${product.id})">Add to Cart</button>
+                </div>
+            `).join('');
+        }
+
+        function displayCart() {
+            const cartContainer = document.getElementById('cart-items');
+            const totalContainer = document.getElementById('total');
+            cartContainer.innerHTML = cart.map(item => `
+                <div class="cart-item">
+                    <img src="${products.find(p => p.id === item.id).image}" alt="${item.name}">
+                    <h4>${item.name}</h4>
+                    <p>RS.${item.price} x ${item.quantity}</p>
+                    <button class="button" onclick="removeFromCart(${item.id})">Remove</button>
+                </div>
+            `).join('');
+
+            const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+            totalContainer.textContent = total;
+        }
+
+        function addToCart(id) {
+            const product = products.find(p => p.id === id);
+            const cartItem = cart.find(item => item.id === id);
+
+            if (cartItem) {
+                cartItem.quantity++;
+            } else {
+                cart.push({ ...product, quantity: 1 });
+            }
+            displayCart();
+        }
+
+        function removeFromCart(id) {
+            const index = cart.findIndex(item => item.id === id);
+            if (index > -1) {
+                cart.splice(index, 1);
+                displayCart();
+            }
+        }
+
+        function checkout() {
+            alert('Thank you for your purchase!');
+            cart.length = 0;
+            displayCart();
+        }
+
+        document.getElementById('checkout').addEventListener('click', checkout);
+
+        window.onload = () => {
+            displayProducts();
+            displayCart();
+        };
+    </script>
+</body>
+</html>
